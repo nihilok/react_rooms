@@ -80,8 +80,7 @@ const WebSocket = () => {
             setInRoom(false);
         });
         socket.current.on("update room", (data) => {
-            console.log(data.room_name === roomData.room_name)
-            if (data.room_name === roomData.room_name) {
+            if (checkRoomName(data.room_name)) {
             setRoomData(roomData => ({
                 ...roomData,
                 players: data.players

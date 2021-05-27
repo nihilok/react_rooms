@@ -1,13 +1,15 @@
-import json
 from pydantic import BaseModel
 from typing import List
 import socketio
 
+
 sio = socketio.AsyncServer(cors_allowed_origins='*', async_mode='asgi')
 app = socketio.ASGIApp(sio)
 
+
 players = {}
 rooms = []
+
 
 class Player(BaseModel):
     username: str
@@ -23,12 +25,13 @@ class Room(BaseModel):
 
 @sio.event
 async def connect(sid, environ, auth):
-
     print(environ['asgi.scope']['client'])
+
 
 @sio.event
 async def connect_error(data):
     print("The connection failed!")
+
 
 @sio.event
 async def disconnect(sid):
@@ -41,10 +44,12 @@ async def disconnect(sid):
 
     print(f"{sid} disconnected!")
 
+
 @sio.on('get response')
 async def get_response(sid):
     print(sid)
     return 'Hello, world!'
+
 
 @sio.event
 async def new_player(sid: str, room_name: str, username: str):
