@@ -2,7 +2,8 @@ import React, {useState, useEffect, useRef, useCallback} from "react";
 import socketIOClient from "socket.io-client";
 import ConnectedIndicator from "./ConnectedIndicator";
 
-const ENDPOINT = "192.168.1.95:8000";
+// const ENDPOINT = "192.168.1.95:8000";
+const ENDPOINT = "localhost:5000";
 
 const WebSocket = () => {
 
