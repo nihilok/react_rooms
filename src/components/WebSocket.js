@@ -1,9 +1,6 @@
 import React, {useState, useEffect, useRef, useCallback} from "react";
-import socketIOClient from "socket.io-client";
+import {socketio} from "../service/socket";
 import ConnectedIndicator from "./ConnectedIndicator";
-
-const ENDPOINT = "192.168.1.95:8000";
-// const ENDPOINT = "localhost:5000";
 
 const WebSocket = () => {
 
@@ -103,7 +100,7 @@ const WebSocket = () => {
         }, [token])
 
         useEffect(() => {
-            socket.current = socketIOClient(ENDPOINT);
+            socket.current = socketio;
             socket.current.on("connect", () => {
                 handleToken();
             });
@@ -143,7 +140,7 @@ const WebSocket = () => {
                                                                   placeholder="Room Name" name="roomName" required/></div>
                         <div className={inputClasses.user}><input type="text" value={userName} onChange={handleChange}
                                                                   placeholder="Nickname" name="userName" required/></div>
-                        <input type="submit" value="Join/Create Room"/>
+                        <input type="submit" value="Join/Create Room" className="btn"/>
                     </form>
                 ) : roomData ? (
                     <div className="room-data">

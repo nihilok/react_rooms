@@ -1,3 +1,5 @@
+from pprint import pprint
+
 from pydantic import BaseModel
 from typing import List, Optional
 import socketio
@@ -14,6 +16,7 @@ class Player(BaseModel):
     username: Optional[str] = None
     last_sid: str
     last_client_ip: str
+    platform: str
     token: Optional[str] = None
     connected: bool = True
 
@@ -26,7 +29,7 @@ class Room(BaseModel):
 
 @sio.event
 async def connect(sid, environ, auth):
-    player = Player(last_client_ip=environ['asgi.scope']['client'][0], last_sid=sid)
+    player = Player(last_client_ip=environ['asgi.scope']['client'][0], last_sid=sid, platform=environ['asgi.scope']['headers'][1][1])
     players[sid] = player
 
 
