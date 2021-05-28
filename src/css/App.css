@@ -44,6 +44,7 @@
 .join-room-form {
     background-color: #cbcbcb;
     width: 80%;
+    max-width: 30rem;
     margin: auto;
     border-radius: 5px;
     padding: 2rem 2rem;
