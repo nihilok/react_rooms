@@ -28,8 +28,6 @@ class Room(BaseModel):
 async def connect(sid, environ, auth):
     player = Player(last_client_ip=environ['asgi.scope']['client'][0], last_sid=sid)
     players[sid] = player
-    print(player.last_client_ip + ' connected!')
-    print(f'available rooms: {rooms}')
 
 
 @sio.event
@@ -39,7 +37,6 @@ async def get_token(sid):
         sha_sig = hashlib.sha256((player.last_client_ip).encode('utf-8')).hexdigest()
         player.token = sha_sig
         players[sha_sig] = player
-        print(f'token: {sha_sig}')
         return sha_sig
     else:
         print('Player not found')
@@ -66,12 +63,6 @@ async def disconnect(sid):
     print(f"{player.last_client_ip} disconnected!")
 
 
-@sio.on('get response')
-async def get_response(sid):
-    print(sid)
-    return 'Hello, world!'
-
-
 @sio.event
 async def new_player(sid: str, room_name: str, username: str, token: str):
     player = players.get(token)
@@ -89,7 +80,7 @@ async def new_player(sid: str, room_name: str, username: str, token: str):
         room = rooms[room_name]
         room_players = [player.username for player in room.players]
         if username in room_players:
-            if not room.players[room_players.index(username)] == players[token]:
+            if room.players[room_players.index(username)].token == players[token].token:
                 room.players[room_players.index(username)].connected = True
                 room.players[room_players.index(username)].last_sid = sid
                 await sio.emit('update room', room.dict())
@@ -106,7 +97,9 @@ async def leave_room(sid: str, room_name: str, token: str):
     sio.leave_room(sid, room_name)
     for player in rooms[room_name].players:
         if player.token == token:                                   # TODO use compare digest
-            print(f'removing {player.username}')
+            if rooms[room_name].host == player.username:
+                if len(rooms[room_name].players) > 1:
+                    rooms[room_name].host = rooms[room_name].players[1].username
             rooms[room_name].players.remove(player)
             await sio.emit('update room', rooms[room_name].dict())
             break

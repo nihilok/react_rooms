@@ -2,6 +2,7 @@
 
 # dependencies
 /node_modules
+/venv
 /.pnp
 .pnp.js
 
@@ -21,3 +22,6 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# backups
+/react_socket_rooms.tar.gz
