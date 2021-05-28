@@ -2,7 +2,7 @@ import React, {useState, useEffect, useRef, useCallback} from "react";
 import {socketio} from "../service/socket";
 import ConnectedIndicator from "./ConnectedIndicator";
 
-const WebSocket = () => {
+const WebSocketRoom = () => {
 
         const socket = useRef(null)
         const [roomName, setRoomName] = useState('')
@@ -73,7 +73,6 @@ const WebSocket = () => {
         }
 
         const leaveRoom = () => {
-            console.log(token)
             socket.current.emit('leave_room', roomName, token, () => {
                 setInRoom(false);
                 setRoomData(initialRoomData)
@@ -94,6 +93,7 @@ const WebSocket = () => {
                     console.log(token)
                     console.log(data)
                     localStorage.setItem('token', data);
+                    console.log('token changed')
                 }
                 setConnected(true)
             })
@@ -119,6 +119,7 @@ const WebSocket = () => {
                         players: data.players,
                         host: data.host
                     }));
+                    console.log(data.players)
                 }
             });
             // return () => {
@@ -163,4 +164,4 @@ const WebSocket = () => {
 ;
 
 
-export default WebSocket;
+export default WebSocketRoom;

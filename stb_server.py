@@ -17,14 +17,33 @@ class Player(BaseModel):
     last_sid: str
     last_client_ip: str
     platform: str
+    room: Optional[str] = None
     token: Optional[str] = None
-    connected: bool = True
+    connected: bool = False
+
+    def __str__(self):
+        return self.username
 
 
 class Room(BaseModel):
     room_name: str
     players: List[Player]
     host: str
+
+
+async def get_player_by_sid(sid):
+    player = [player for player in players.values() if player.last_sid == sid][0]
+    return player
+
+
+async def pass_host(room, player):
+    if room.host == player.username:
+        if len(room.players) > 1:
+            connected_clients = [p for p in rooms[room.room_name].players if p.connected]
+            if connected_clients:
+                rooms[room.room_name].host = [p for p in rooms[room.room_name].players if p.connected][-1].username
+            else:
+                del rooms[room.room_name]
 
 
 @sio.event
@@ -37,9 +56,10 @@ async def connect(sid, environ, auth):
 async def get_token(sid):
     player = players.get(sid)
     if player:
-        sha_sig = hashlib.sha256((player.last_client_ip).encode('utf-8')).hexdigest()
+        sha_sig = hashlib.sha256((player.last_client_ip + player.platform).encode('utf-8')).hexdigest()
         player.token = sha_sig
         players[sha_sig] = player
+        del players[sid]
         return sha_sig
     else:
         print('Player not found')
@@ -50,20 +70,21 @@ async def connect_error(data):
     print("The connection failed!")
 
 
-async def get_player_by_sid(sid):
-    player = [player for player in players.values() if player.last_sid == sid][0]
-    return player
-
-
 @sio.event
 async def disconnect(sid):
     player = await get_player_by_sid(sid)
-    for room in rooms.values():
-        room_players = [player.username for player in room.players]
+    room = rooms.get(player.room)
+    if room:
+        print(f'room name: {room.room_name}')
+        room_players = [p.username for p in room.players]
+        print(f"room players: {', '.join(room_players)}")
         if player.username in room_players:
-            player.connected = False
+            players[player.token].connected = False
+            room.players[room_players.index(player.username)].connected = False
+            await pass_host(room, players[player.token])
             await sio.emit('update room', room.dict())
-    print(f"{player.last_client_ip} disconnected!")
+    print(f"{player.username or player.token} disconnected!")
+    print(player.connected)
 
 
 @sio.event
@@ -74,6 +95,8 @@ async def new_player(sid: str, room_name: str, username: str, token: str):
         last_client_ip=None,
     )
     player.username = username
+    player.room = room_name
+    player.connected = True
     players[token] = player
     sio.enter_room(sid, room_name)
     if room_name not in rooms.keys():
@@ -100,11 +123,10 @@ async def leave_room(sid: str, room_name: str, token: str):
     sio.leave_room(sid, room_name)
     for player in rooms[room_name].players:
         if player.token == token:                                   # TODO use compare digest
-            if rooms[room_name].host == player.username:
-                if len(rooms[room_name].players) > 1:
-                    rooms[room_name].host = rooms[room_name].players[1].username
+            await pass_host(rooms[room_name], player)
             rooms[room_name].players.remove(player)
             await sio.emit('update room', rooms[room_name].dict())
             break
     if len(rooms[room_name].players) == 0:
         del rooms[room_name]
+        print(f'room {room_name} deleted')
