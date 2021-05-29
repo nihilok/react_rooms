@@ -17,7 +17,6 @@
 }
 
 html {
-    overflow-x: hidden;
 }
 
 a {
@@ -40,6 +39,7 @@ img {
 }
 
 body {
+
     line-height: 1.6;
     font-family: 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
@@ -124,8 +124,23 @@ code {
     border: 1px solid white;
 }
 
+.btn-round {
+    border-radius: 50%;
+    width: 4rem;
+    height: 4rem;
+    padding: 1rem .2rem;
+}
+
 .btn:hover {
     transform: scale(.98);
+}
+
+.btn:focus {
+    font-weight: bold;
+}
+
+.text-bold {
+    font-weight: bold;
 }
 
 /* Colors */
@@ -283,16 +298,25 @@ code {
 }
 
 :focus {
-    box-shadow: 0 0 0 1rem rgba(0, 0, 0, .35);
-    outline: none;
+    box-shadow: 0 0 .2rem .1rem rgba(135, 86, 201, 0.5);
+    outline: none !important;
 }
+
+input {
+    border-radius: 5px;
+    /*border: none;*/
+    box-shadow: var(--shadow);
+}
+
+input:focus {
+    border: 2px solid var(--secondary-color);
+}
+
 
 ::-moz-focus-inner {
     outline: none;
-    border: 0;
 }
 
 ::-moz-focus-outer {
-    border: 0;
     outline: none;
 }

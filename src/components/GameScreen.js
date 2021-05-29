@@ -9,8 +9,9 @@ const GameScreen = () => {
 
 
         return (
-            <div>
-
+            <div className="game-screen grid">
+                <div className="game-screen-section controls">Hello</div>
+                <div className="game-screen-section game">Hello2</div>
             </div>
         );
     }

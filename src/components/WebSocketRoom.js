@@ -1,10 +1,13 @@
 import React, {useState, useEffect, useRef, useCallback} from "react";
 import {socketio} from "../service/socket";
 import ConnectedIndicator from "./ConnectedIndicator";
+import PlayersMenu from "./PlayersMenu";
+import GameScreen from "./GameScreen";
 
 const WebSocketRoom = () => {
 
         const socket = useRef(null)
+        const menu = useRef(null)
         const [roomName, setRoomName] = useState('')
         const [userName, setUserName] = useState('')
         const [connected, setConnected] = useState(false)
@@ -19,6 +22,7 @@ const WebSocketRoom = () => {
         const initialInputClasses = {user: initialInputClass, room: initialInputClass}
         const [inputClasses, setInputClasses] = useState(initialInputClasses)
         const [token, setToken] = useState(null)
+        const [menuState, setMenuState] = useState('Menu')
 
 
         const handleChange = (e) => {
@@ -73,6 +77,7 @@ const WebSocketRoom = () => {
         }
 
         const leaveRoom = () => {
+            showHideMenu();
             socket.current.emit('leave_room', roomName, token, () => {
                 setInRoom(false);
                 setRoomData(initialRoomData)
@@ -99,6 +104,16 @@ const WebSocketRoom = () => {
             })
         }, [token])
 
+        const showHideMenu = () => {
+            if (menu.current.style.transform === 'translateY(0px)') {
+                setMenuState('Menu')
+                menu.current.style.transform = 'translateY(100%)';
+            } else {
+                setMenuState('Hide')
+                menu.current.style.transform = 'translateY(0px)';
+            }
+        }
+
         useEffect(() => {
             socket.current = socketio;
             socket.current.on("connect", () => {
@@ -110,6 +125,7 @@ const WebSocketRoom = () => {
             socket.current.on("disconnect", () => {
                 setConnected(false);
                 setInRoom(false);
+                window.location.reload();
             });
             socket.current.on("update room", (data) => {
                 if (checkRoomName(data.room_name)) {
@@ -122,39 +138,41 @@ const WebSocketRoom = () => {
                     console.log(data.players)
                 }
             });
-            // return () => {
-            //     if (inRoom) {
-            //         console.log('leaving room');
-            //         socket.emit('client_disconnect')
-            //     }
-            // }
 
         }, [checkRoomName, handleToken]);
 
 
         return (
             <div className="login-screen">
-                <ConnectedIndicator connected={connected}/>
+
+
                 {!inRoom ? (
-                    <form onSubmit={handleSubmit} className={"join-room-form flex-col flex-center"}>
-                        <div className={inputClasses.room}><input type="text" value={roomName} onChange={handleChange}
-                                                                  placeholder="Room Name" name="roomName" required/></div>
-                        <div className={inputClasses.user}><input type="text" value={userName} onChange={handleChange}
-                                                                  placeholder="Nickname" name="userName" required/></div>
-                        <input type="submit" value="Join/Create Room" className="btn"/>
-                    </form>
+                    <>
+                        <ConnectedIndicator connected={connected}/>
+                        <form onSubmit={handleSubmit} className={"join-room-form flex-col flex-center"}>
+                            <div className={inputClasses.room}><input type="text" value={roomName}
+                                                                      onChange={handleChange}
+                                                                      placeholder="Room Name" name="roomName" required/>
+                            </div>
+                            <div className={inputClasses.user}><input type="text" value={userName}
+                                                                      onChange={handleChange}
+                                                                      placeholder="Nickname" name="userName" required/>
+                            </div>
+                            <input type="submit" value="Join/Create Room" className="btn"/>
+                        </form>
+                    </>
                 ) : roomData ? (
-                    <div className="room-data">
-                        <div>Room Name: {roomData.room_name}</div>
-                        <div>Host: {roomData.host}</div>
-                        <div>Players: {roomData.players.map((player, index) => {
-                            return (
-                                <div key={player.username}>{player.connected ? player.username :
-                                    <strike>{player.username}</strike>}</div>
-                            )
-                        })}</div>
-                        <button onClick={leaveRoom} className="btn w-max-content mx-auto">Leave Room</button>
-                    </div>
+                    <>
+                        <button className="btn btn-primary btn-round" onClick={showHideMenu} style={{
+                            position: 'fixed',
+                            right: '.5rem',
+                            bottom: '.5rem',
+                            margin: '1rem auto 1rem 1rem',
+                            zIndex: 9999
+                        }}>{menuState}</button>
+                        <PlayersMenu roomData={roomData} setRoomData={setRoomData} onLeave={leaveRoom} myRef={menu}/>
+                        <GameScreen/>
+                    </>
                 ) : ''}
                 {/*{response ? <div>{response}</div> : <div>'No response'</div>}*/}
 

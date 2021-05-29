@@ -25,7 +25,7 @@ const ConnectedIndicator = ({connected}) => {
 
     return (
         <div className="connected-indicator flex">
-            <div className="connected-text">{connected ? 'Connected' : 'Not connected'}</div>
+            <div className="connected-text">{connected ? 'Online' : 'Offline'}</div>
             <div style={style} className="connected-light"/>
         </div>
     );

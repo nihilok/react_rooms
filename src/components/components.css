@@ -1,0 +1,114 @@
+.players-menu {
+    justify-content: center;
+    position: fixed;
+    bottom: 0;
+    padding: 1rem 2rem;
+    transform: translateY(100%);
+    background-color: var(--light-color);
+    border-radius: 5px;
+    box-shadow: var(--shadow);
+    width: 100%;
+    transition: transform 600ms;
+    z-index: 9990;
+    /*transform: translate3d(0, 0, 0);*/
+}
+
+.player {
+    display: inline-block;
+    margin-left: .2rem;
+}
+
+.info-panel {
+    background-color: white;
+    border-radius: 10px;
+    height: 100%;
+    margin: 1rem 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.room-data {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    margin: auto;
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+}
+
+.menu-heading {
+    margin-right: 4px;
+}
+
+.game-screen {
+    width: 95%;
+    flex-grow: 1;
+    max-height: 95vh;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    background-color: white;
+    border-radius: 5px;
+    grid-template-columns: 1fr 4fr;
+    justify-content: center;
+    align-items: center;
+    box-shadow: var(--shadow);
+    padding: 1rem;
+}
+
+.game-screen-section {
+    margin: 2px;
+    border-radius: 3px;
+    border: 2px solid var(--secondary-color);
+    height: 100%;
+}
+
+.controls {
+    min-width: 24ch;
+}
+
+.game {
+}
+
+@media (max-width: 768px) {
+    .room-data {
+        grid-template-columns: 1fr;
+        gap: .2rem;
+    }
+    .game-screen {
+        grid-template-columns: 1fr;
+        grid-template-rows: 4fr 1fr;
+    }
+  .game-screen-section:nth-child(1) { order: 2; }
+  .game-screen-section:nth-child(2) { order: 1; }
+  .controls {
+      min-height: 3rem;
+  }
+}
+
+.on-from-bottom {
+    animation: onFromBottom 1s ease forwards;
+}
+
+.off-bottom {
+    animation: offToBottom 1s ease forwards;
+}
+
+@keyframes onFromBottom {
+    from {
+        transform: translateY(100%);
+    }
+    to {
+        transform: translateY(0);
+    }
+}
+
+@keyframes offToBottom {
+    from {
+        transform: translateY(0);
+    }
+    to {
+        transform: translateY(100%);
+    }
+}
