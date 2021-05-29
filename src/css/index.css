@@ -265,6 +265,7 @@ code {
 .w-max-content {
     width: max-content;
 }
+
 .max-width {
     width: 100%;
 }
@@ -279,4 +280,19 @@ code {
     .sm-hidden {
         display: none;
     }
+}
+
+:focus {
+    box-shadow: 0 0 0 1rem rgba(0, 0, 0, .35);
+    outline: none;
+}
+
+::-moz-focus-inner {
+    outline: none;
+    border: 0;
+}
+
+::-moz-focus-outer {
+    border: 0;
+    outline: none;
 }

@@ -120,13 +120,13 @@ async def new_player(sid: str, room_name: str, username: str, token: str):
 
 @sio.event
 async def leave_room(sid: str, room_name: str, token: str):
-    sio.leave_room(sid, room_name)
     for player in rooms[room_name].players:
         if player.token == token:                                   # TODO use compare digest
-            await pass_host(rooms[room_name], player)
+            await pass_host(rooms[room_name], players[player.token])
             rooms[room_name].players.remove(player)
             await sio.emit('update room', rooms[room_name].dict())
             break
+    sio.leave_room(sid, room_name)
     if len(rooms[room_name].players) == 0:
         del rooms[room_name]
         print(f'room {room_name} deleted')
