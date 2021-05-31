@@ -74,14 +74,12 @@ async def check_duplicate_players(token, room, sid, username):
 
 @sio.event
 async def new_player(sid: str, room_name: str, username: str, token: str):
-    print(token)
     player = await get_object(token)
     player = Player(**player)
     player = player if player is not None else Player(
         last_sid=sid,
         last_client_ip=None,
     )
-    pprint(player)
     player.username = username
     player.room = room_name
     player.connected = True
@@ -95,7 +93,6 @@ async def new_player(sid: str, room_name: str, username: str, token: str):
         room = await get_object(room_name)
         room = Room(**room)
         room_players = [player.username for player in room.players]
-        pprint(room_players)
         if username in room_players:
             if room.players[room_players.index(username)].token == token:
                 room.players[room_players.index(username)].connected = True
@@ -113,13 +110,10 @@ async def new_player(sid: str, room_name: str, username: str, token: str):
 
 
 async def pass_host(room, player):
-    print('Passing host...')
-    connected_players = [p for p in room.players if p.connected and not p.host]
+    connected_players = [p for p in room.players if p.connected]
     if connected_players:
-        player.connected = False
         if player.host:
             player.host = False
-            print('getting new host')
             new_host = Player(**await get_object(connected_players[-1].token))
             new_host.host = True
             rp = [p.username for p in room.players]
@@ -138,6 +132,7 @@ async def pass_host(room, player):
 async def disconnect(sid):
     token = await get_item(sid)
     room, player = await get_room_player(token)
+    player.connected = False
     if room:
         room_players = [p.username for p in room.players]
         room.players[room_players.index(player.username)] = player
