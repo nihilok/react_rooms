@@ -1,16 +1,73 @@
+.connected-indicator {
+    justify-content: center;
+    background-color: white;
+    border-radius: 5px;
+    width: max-content;
+    padding: .5rem 1rem;
+    margin: 1rem 1rem 1rem auto;
+    box-shadow: var(--shadow);
+    position: absolute;
+    top: .5rem;
+    right: .5rem;
+}
+
+.connected-indicator .connected-light {
+    margin-left: 1rem;
+    margin-top: .3rem;
+}
+
+.join-room-form {
+    background-color: #cbcbcb;
+    width: 80%;
+    max-width: 30rem;
+    margin: auto;
+    border-radius: 5px;
+    padding: 1rem 2rem 2rem 2rem;
+    box-shadow: var(--shadow);
+}
+
+.login-screen {
+    height: 100%;
+    display: flex;
+    flex-grow: 1;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.login-screen input {
+    margin-top: 2rem;
+}
+
+
 .players-menu {
     justify-content: center;
     position: fixed;
     bottom: 0;
-    padding: 1rem 2rem;
-    transform: translateY(100%);
-    background-color: var(--light-color);
-    border-radius: 5px;
-    box-shadow: var(--shadow);
-    width: 100%;
+    padding: 2.5rem 2rem 1rem 2rem;
+    left: 0;
+    transform: translateY(95%);
+    background-image: var(--main-gradient-reversed);
+    border-radius: 10px 10px 0 0;
+    box-shadow: 0 -2px 5px 5px rgba(0,0,0,0.4);
+    width: 100vw;
     transition: transform 600ms;
-    z-index: 9990;
+    z-index: 100;
     /*transform: translate3d(0, 0, 0);*/
+}
+
+
+.swipe-area {
+    height: 10vh;
+    width: 100vw;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    z-index: 101;
+}
+
+.logo {
+    max-width: 100px;
 }
 
 .player {
@@ -18,21 +75,29 @@
     margin-left: .2rem;
 }
 
+.players-list {
+    max-height: 30vh;
+    overflow-y: auto;
+}
+
 .info-panel {
     background-color: white;
     border-radius: 10px;
-    height: 100%;
+    height: max-content;
     margin: 1rem 1rem;
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-wrap: wrap;
+    padding: .8rem .2rem;
+    width: 100%;
 }
 
 .room-data {
-    display: grid;
-    grid-template-columns: 1fr 2fr;
+    display: flex;
     margin: auto;
     width: 100%;
+    height: 100%;
     text-align: center;
     justify-content: center;
     align-items: center;
@@ -43,48 +108,95 @@
 }
 
 .game-screen {
-    width: 95%;
-    flex-grow: 1;
-    max-height: 95vh;
-    margin-top: 1rem;
-    margin-bottom: 1rem;
+    width: 95vw;
+    height: 80%;
+    margin: 1rem 0;
     background-color: white;
     border-radius: 5px;
-    grid-template-columns: 1fr 4fr;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     box-shadow: var(--shadow);
     padding: 1rem;
+    scroll-snap-type: y;
+    z-index: 0;
 }
 
 .game-screen-section {
     margin: 2px;
     border-radius: 3px;
-    border: 2px solid var(--secondary-color);
     height: 100%;
-}
-
-.controls {
-    min-width: 24ch;
+    width: 100%;
+    background-color: rgba(239, 200, 200, 0.65);
 }
 
 .game {
+    height: 100%;
+    width: 100%;
 }
+
+
+.controls {
+    min-width: 30ch;
+    height: 30%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+}
+
+.controls input[type='text'] {
+    z-index: 100;
+}
+
+.controls .btn {
+    z-index: 100;
+}
+
+
+.clickable-letter {
+    height: 3rem;
+    width: 3rem;
+    cursor: pointer;
+    background-color: var(--light-color);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-size: 2rem;
+    border-radius: 5px;
+    box-shadow: var(--shadow);
+    margin: .5rem;
+    user-select: none;
+    transition: .5s ease-in-out;
+}
+
+.clicked {
+    transform: translateY(10px) scale(.98);
+    box-shadow: 0 2px 2px 2px rgba(0,0,0,0.2);
+}
+
 
 @media (max-width: 768px) {
     .room-data {
-        grid-template-columns: 1fr;
-        gap: .2rem;
+        flex-direction: column;
     }
-    .game-screen {
-        grid-template-columns: 1fr;
-        grid-template-rows: 4fr 1fr;
+
+    .controls {
+        min-height: 3rem;
+        min-width: 0;
     }
-  .game-screen-section:nth-child(1) { order: 2; }
-  .game-screen-section:nth-child(2) { order: 1; }
-  .controls {
-      min-height: 3rem;
-  }
+}
+
+.send-btn {
+    height: 3rem;
+    max-width: 3rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 2rem 0 0 1rem;
 }
 
 .on-from-bottom {
@@ -93,22 +205,4 @@
 
 .off-bottom {
     animation: offToBottom 1s ease forwards;
-}
-
-@keyframes onFromBottom {
-    from {
-        transform: translateY(100%);
-    }
-    to {
-        transform: translateY(0);
-    }
-}
-
-@keyframes offToBottom {
-    from {
-        transform: translateY(0);
-    }
-    to {
-        transform: translateY(100%);
-    }
 }
