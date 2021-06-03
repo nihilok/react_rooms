@@ -1,6 +1,6 @@
 import io from "socket.io-client";
 
-const ENDPOINT = "192.168.1.95:8000";
+const ENDPOINT = "86.129.91.108:8000";
 // const ENDPOINT = "localhost:5000";
 
 

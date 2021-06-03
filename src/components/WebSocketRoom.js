@@ -4,12 +4,15 @@ import ConnectedIndicator from "./ConnectedIndicator";
 import PlayersMenu from "./PlayersMenu";
 import GameScreen from "./GameScreen";
 import {useSwipeable} from "react-swipeable";
+import LoginScreen from "./LoginScreen";
+import MsgScreen from "./MsgScreen";
 
 
 const WebSocketRoom = () => {
 
     const socket = useRef(null)
     const menu = useRef(null)
+    const scrollRef = useRef(null)
     const [roomName, setRoomName] = useState('')
     const [userName, setUserName] = useState('')
     const [connected, setConnected] = useState(false)
@@ -17,6 +20,7 @@ const WebSocketRoom = () => {
     const initialRoomData = {
         room_name: '',
         players: [],
+        messages: [],
         host: ''
     }
     const [roomData, setRoomData] = useState(initialRoomData)
@@ -114,13 +118,13 @@ const WebSocketRoom = () => {
     const hideMenu = () => {
         if (menu.current.style.transform === 'translateY(0px)') {
             setMenuState('hidden')
-            menu.current.style.transform = 'translateY(90%)';
+            menu.current.style.transform = 'translateY(95%)';
             menu.current.style.zIndex = 100;
         }
     }
 
     const showMenu = () => {
-        if (menu.current.style.transform === 'translateY(90%)')
+        if (menu.current.style.transform === 'translateY(95%)')
             setMenuState('open')
         menu.current.style.transform = 'translateY(0px)';
         menu.current.style.zIndex = 102;
@@ -190,11 +194,14 @@ const WebSocketRoom = () => {
                     ...roomData,
                     room_name: data.room_name,
                     players: data.players,
-                    host: data.host
+                    host: data.host,
+                    messages: data.messages
                 }));
                 checkHost(data.host);
             }
-
+            if (scrollRef.current) {
+                scrollRef.current.scroll(0, scrollRef.current.scrollHeight);
+            }
         });
 
     }, [checkRoomName, checkHost, handleConnect]);
@@ -205,20 +212,12 @@ const WebSocketRoom = () => {
 
 
             {!inRoom ? (
-                <>
-                    <ConnectedIndicator connected={connected}/>
-                    <form onSubmit={handleSubmit} className={"join-room-form flex-col flex-center"}>
-                        <div className={inputClasses.room}><input type="text" value={roomName}
-                                                                  onChange={handleChange}
-                                                                  placeholder="Room Name" name="roomName" required/>
-                        </div>
-                        <div className={inputClasses.user}><input type="text" value={userName}
-                                                                  onChange={handleChange}
-                                                                  placeholder="Nickname" name="userName" required/>
-                        </div>
-                        <input type="submit" value="Join/Create Room" className="btn"/>
-                    </form>
-                </>
+                <LoginScreen connected={connected}
+                             roomName={roomName}
+                             handleSubmit={handleSubmit}
+                             handleChange={handleChange}
+                             userName={userName}
+                             inputClasses={inputClasses}/>
             ) : roomData ? (
                 <div style={{
                     height: '100%',
@@ -228,7 +227,7 @@ const WebSocketRoom = () => {
                 }}>
                     <PlayersMenu roomData={roomData} setRoomData={setRoomData} onLeave={leaveRoom} myRef={menu}
                                  hideMenu={hideMenu}/>
-                    <GameScreen socket={socket} roomData={roomData} host={playerData.host}/>
+                    <MsgScreen socket={socket} roomData={roomData} playerData={playerData} username={userName} scrollRef={scrollRef}/>
                     <div className="swipe-area" {...handlers}/>
                 </div>
             ) : ''}

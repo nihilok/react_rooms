@@ -1,5 +1,5 @@
 import React from 'react';
-import './components.css'
+import '../css/components.css'
 import {useSwipeable} from "react-swipeable";
 import logo from '../logo.png'
 

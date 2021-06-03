@@ -11,6 +11,7 @@ from pprint import pprint
 import socketio
 from typing import List, Optional
 from pydantic import BaseModel
+import time
 
 from utils import set_object, get_object, create_token, get_keys, delete_key, set_item, get_item, set_sid
 
@@ -27,11 +28,19 @@ class Player(BaseModel):
     room: Optional[str] = None
 
 
+
+class Message(BaseModel):
+    sender: str
+    msg: str
+    time: float
+
+
 class Room(BaseModel):
     room_name: str
     players: List[Player]
     host: str
     words: List[str] = []
+    messages: List[Message] = []
 
 
 async def get_room_player(token):
@@ -107,6 +116,17 @@ async def new_player(sid: str, room_name: str, username: str, token: str):
     await set_object(room_name, room)
     await set_object(token, player)
     return {'room': room.dict(), 'player': player.dict()}
+
+@sio.event
+async def send_message(sid: str, room_name: str, msg: dict):
+    msg = Message(**msg, time=time.time())
+
+    room = Room(**await get_object(room_name))
+    room.messages.append(msg)
+    print(room.messages)
+    await set_object(room_name, room)
+    await sio.emit('update room', room.dict())
+    del room
 
 
 async def pass_host(room, player):
