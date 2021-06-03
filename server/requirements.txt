@@ -1,0 +1,4 @@
+pydantic
+python-socketio
+aioredis
+uvicorn[standard]

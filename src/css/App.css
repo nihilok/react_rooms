@@ -49,7 +49,7 @@ input[type="text"]:focus {
     color: black;
     font-size: .8rem;
     position: absolute;
-    left: 50%;
+    left: 45%;
     transform: translate(-110px, 10px);
     animation: fadeIn .3s ease-in;
     margin-bottom: 1px;
@@ -61,7 +61,7 @@ input[type="text"]:focus {
     color: black;
     font-size: .8rem;
     position: absolute;
-    left: 50%;
+    left: 45%;
     transform: translate(-110px, 10px);
     animation: fadeIn .3s ease-in;
 }
