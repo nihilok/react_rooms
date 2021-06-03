@@ -28,7 +28,6 @@ class Player(BaseModel):
     room: Optional[str] = None
 
 
-
 class Message(BaseModel):
     sender: str
     msg: str
@@ -117,13 +116,13 @@ async def new_player(sid: str, room_name: str, username: str, token: str):
     await set_object(token, player)
     return {'room': room.dict(), 'player': player.dict()}
 
+
 @sio.event
 async def send_message(sid: str, room_name: str, msg: dict):
     msg = Message(**msg, time=time.time())
 
     room = Room(**await get_object(room_name))
     room.messages.append(msg)
-    print(room.messages)
     await set_object(room_name, room)
     await sio.emit('update room', room.dict())
     del room
